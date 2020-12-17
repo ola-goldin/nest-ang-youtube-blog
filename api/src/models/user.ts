@@ -3,7 +3,9 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 export interface User{
  id?:number,
  name?:string,
- username?:string
+ username?:string,
+ email?:string,
+ password?:string
 }
 
 @Entity()
@@ -13,5 +15,9 @@ export class UserEntity implements User{
     @Column()
     name?:string;
     @Column({unique:true})
-    username?:string
+    username?:string;
+    @Column()
+    email?:string;
+    @Column({ select: false })
+    password?:string
 }

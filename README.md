@@ -12,3 +12,4 @@ npm install --save @nestjs/typeorm typeorm pg
 
 git flow init
 git flow feature start user-crud
+ git flow feature finish user-crud
