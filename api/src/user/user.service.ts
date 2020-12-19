@@ -22,6 +22,7 @@ export class UserService {
                 userEntity.name = user.name
                 userEntity.username = user.username
                 userEntity.password = hash
+                userEntity.role = user.role
                 return from(this.userrepository.save(userEntity)).pipe(
                     map((user)=>{
                         const {password, ...result} = user;
@@ -40,7 +41,7 @@ export class UserService {
                 return users;
             })
         )
-        )
+       
     }
 
     delete(id:number):Observable<any>{

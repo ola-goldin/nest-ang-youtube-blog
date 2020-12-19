@@ -1,3 +1,19 @@
+# nest-ang-youtube-blog
+npm run start:dev
+
+npm i --save @nestjs/config => .env
+npm install --save @nestjs/typeorm typeorm pg 
+
+@Module({
+  imports: [ConfigModule.forRoot({isGlobal:true}),
+  TypeOrmModule.forRoot({type:'postgres', url:process.env.DATABASE_URL,
+  autoLoadEntities:true,synchronize:true
+})],
+
+git flow init
+git flow feature start user-crud
+ git flow feature finish user-crud
+ 
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
 </p>
