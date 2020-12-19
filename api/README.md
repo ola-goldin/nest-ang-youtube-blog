@@ -3,6 +3,7 @@ npm run start:dev
 
 npm i --save @nestjs/config => .env
 npm install --save @nestjs/typeorm typeorm pg 
+npm i nestjs-typeorm-paginate
 
 @Module({
   imports: [ConfigModule.forRoot({isGlobal:true}),
@@ -14,6 +15,7 @@ git flow init
 git flow feature start user-crud
  git flow feature finish user-crud
  
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
 </p>

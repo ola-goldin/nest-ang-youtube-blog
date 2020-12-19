@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { from, Observable, throwError, } from 'rxjs';
-import {catchError, map, switchMap} from 'rxjs/operators'
+import {catchError, map, switchMap, tap} from 'rxjs/operators'
 import { AuthService } from 'src/auth/auth/auth.service';
 import { User, UserEntity } from 'src/models/user';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
@@ -12,6 +13,19 @@ export class UserService {
         @InjectRepository(UserEntity) private readonly userrepository:Repository<UserEntity>,
          private auth:AuthService
     ){}
+
+    paginate(options:IPaginationOptions):Observable<Pagination<User>>{
+      return from(paginate<User>(this.userrepository, options)).pipe(
+          tap(x=>{
+         console.log('aaaaaaaaaaaaaaaaaa'+options)     
+          }),
+           map((res:Pagination<User>)=>{
+               res.items.forEach(function(x) {delete x.password})
+          
+             return res
+           })
+      )
+    }
 
     createUser(user:User):Observable<User>{
         return this.auth.hashPassword(user.password).pipe(
