@@ -9,14 +9,15 @@ export class AuthService {
     constructor(private jwt:JwtService){}
 
     generateJwt(user:User):Observable<string>{
-      return from(this.jwt.signAsync({user}))
+        console.log(user.password)
+      return from(this.jwt.signAsync(user))
     }
 
     hashPassword(password:string):Observable<string>{
         return from<string>(bcrpt.hash(password,12))
     }
-
-    verifyPassword(newPassord:string, hash:string):Observable<any|boolean>{
-        return from<any|boolean>( bcrpt.compare(newPassord,hash))
+    verifyPassword(newPassword: string, passwortHash: string): Observable<any>{
+        return from(bcrpt.compare(newPassword, passwortHash));
     }
+  
 }

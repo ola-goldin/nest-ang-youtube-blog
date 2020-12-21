@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Header, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { access } from 'fs';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { Observable, of } from 'rxjs';
@@ -23,11 +23,15 @@ export class UserController {
     }
     
     @Post('login')
-    login(user:User):Observable<Object>{
+    // @Header('content-type', 'application/json')
+    login(@Body() user:User):Observable<Object>{
+   
       return this.userService.login(user).pipe(
           map(jwt=>{
             return {access_token :jwt}
-          })
+          }),catchError(e=>of({
+            error:e.message}
+            ))
       )
     }
    

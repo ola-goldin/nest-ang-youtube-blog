@@ -26,7 +26,8 @@ export class UserEntity implements User{
     username?:string;
     @Column()
     email?:string;
-    @Column({ select: false })
+  //  @Column({ select: false }) will not fetch ever!!!
+    @Column({nullable:true})
     password?:string;
     @Column({type:'enum',enum: Roles, default:Roles.READER})
     role?:Roles;

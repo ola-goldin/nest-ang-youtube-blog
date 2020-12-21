@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
-import { from, Observable, throwError, } from 'rxjs';
-import {catchError, map, switchMap, tap} from 'rxjs/operators'
+import { from, Observable, of, throwError, } from 'rxjs';
+import {catchError, flatMap, map, mergeMap, switchMap, take, tap} from 'rxjs/operators'
 import { AuthService } from 'src/auth/auth/auth.service';
 import { User, UserEntity } from 'src/models/user';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
@@ -17,7 +17,7 @@ export class UserService {
     paginate(options:IPaginationOptions):Observable<Pagination<User>>{
       return from(paginate<User>(this.userrepository, options)).pipe(
           tap(x=>{
-         console.log('aaaaaaaaaaaaaaaaaa'+options)     
+         //console.log('aaaaaaaaaaaaaaaaaa'+options)     
           }),
            map((res:Pagination<User>)=>{
                res.items.forEach(function(x) {delete x.password})
@@ -78,28 +78,38 @@ export class UserService {
             })
         )    
     }
-
-    validateUser(email:string, password:string):Observable<User>{
-        return from(this.userrepository.findOne({email})).pipe(
-            switchMap(res=> this.auth.verifyPassword(password, res.password).pipe(
-                map(match=>{
-                    if(match){
-                        const {password, ...result} = res;
-                        return result
+   
+    validateUser(email: string, password: string): Observable<User> {
+        return this.findBymail(email).pipe(
+            switchMap((user: User) => this.auth.verifyPassword(password, user.password).pipe(
+      
+                map((match: boolean) => {
+                    if(match) {
+                        const {password, ...result} = user;
+                        return result;
+                    } else {
+                        throw Error;
                     }
-                    else throw Error;
                 })
             ))
         )
+
+    }
+    
+    findBymail(email:string):Observable<User>{
+         return from(this.userrepository.find({ where: {"email":email}}).then(function(x){
+             return x[0]
+         }))
     }
 
-    login(user:User):Observable<string>{
+    login(user: User): Observable<string> {
         return this.validateUser(user.email, user.password).pipe(
-            switchMap(user=>{
-                if(user) return this.auth.generateJwt(user).pipe(
-                    map((jwt:string)=>jwt)
-                )
-                else return "wrong credentials"
+            switchMap((user: User) => {
+                if(user) {
+                    return this.auth.generateJwt(user).pipe(map((jwt: string) => jwt));
+                } else {
+                    return 'Wrong Credentials';
+                }
             })
         )
     }
